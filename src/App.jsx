@@ -110,22 +110,51 @@ function App(){
             </div>
             <div style={{marginTop:12}} className="small">
               <div>Generate a trackable link for any article</div>
-              <div style={{marginTop:8}}>
-                <input id="genInput" className="input" placeholder="Paste article URL and press Generate" />
-                <div style={{marginTop:8}}>
-                  <button className="btn" onClick={()=>{
-                    const v = document.getElementById('genInput').value;
-                    if(v) handleGenerateLink(v);
-                  }}>{linkLoading ? 'Generating...' : 'Generate Link'}
-                </div>
-                {generatedLink && (
-  <div style={{ margin: '10px 0' }}>
-    {generatedLink}
+<div style={{ marginTop: 8 }}>
+  <input
+    id="genInput"
+    className="input"
+    placeholder="Paste article URL and press Generate"
+  />
+  <div style={{ marginTop: 8 }}>
+    <button
+      className="btn"
+      onClick={() => {
+        const v = document.getElementById('genInput').value;
+        if (v) handleGenerateLink(v);
+      }}
+    >
+      {linkLoading ? 'Generating...' : 'Generate Link'}
+    </button>
   </div>
-)}
-wordBreak:'break-all'}}><div className="small">Tracking Link:</div><div style={{marginTop:6, padding:8, background:'#f8fafc', borderRadius:8'}}>{generatedLink}</div></div>}
-              </div>
-            </div>
+
+  {generatedLink && (
+    <div style={{ margin: '10px 0', wordBreak: 'break-all' }}>
+      <div className="small">Tracking Link:</div>
+      <div
+        style={{
+          marginTop: 6,
+          padding: 8,
+          background: '#f1f1f1',
+          borderRadius: 4,
+        }}
+      >
+        <a href={generatedLink} target="_blank" rel="noopener noreferrer">
+          {generatedLink}
+        </a>
+      </div>
+    </div>
+  )}
+</div>
+          borderRadius: 4,
+        }}
+      >
+        <a href={generatedLink} target="_blank" rel="noopener noreferrer">
+          {generatedLink}
+        </a>
+      </div>
+    </div>
+  )}
             <div style={{marginTop:12}} className="small">
               <div>View stats: <a href={BACKEND_URL + '/stats'} target="_blank" rel="noreferrer">/stats</a></div>
               <div style={{marginTop:8}}>Run summary: <a href={BACKEND_URL + '/send-summary'} target="_blank" rel="noreferrer">/send-summary</a></div>
