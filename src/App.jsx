@@ -118,7 +118,12 @@ function App(){
                     if(v) handleGenerateLink(v);
                   }}>{linkLoading ? 'Generating...' : 'Generate Link'}
                 </div>
-                {generatedLink && <div style={{ margin: '10px 0' }}></div>:8, wordBreak:'break-all'}}><div className="small">Tracking Link:</div><div style={{marginTop:6, padding:8, background:'#f8fafc', borderRadius:8'}}>{generatedLink}</div></div>}
+                {generatedLink && (
+  <div style={{ margin: '10px 0' }}>
+    {generatedLink}
+  </div>
+)}
+wordBreak:'break-all'}}><div className="small">Tracking Link:</div><div style={{marginTop:6, padding:8, background:'#f8fafc', borderRadius:8'}}>{generatedLink}</div></div>}
               </div>
             </div>
             <div style={{marginTop:12}} className="small">
