@@ -1,7 +1,7 @@
-import React, {useEffect, useState} from 'react'
+import React, { useEffect, useState } from 'react'
 import { BACKEND_URL } from './config'
 
-function App(){
+function App() {
   const [news, setNews] = useState([])
   const [loading, setLoading] = useState(false)
   const [query, setQuery] = useState('')
@@ -9,42 +9,53 @@ function App(){
   const [generatedLink, setGeneratedLink] = useState('')
   const [linkLoading, setLinkLoading] = useState(false)
 
-  useEffect(()=>{ fetchNews() },[])
+  useEffect(() => {
+    fetchNews()
+  }, [])
 
-  async function fetchNews(){
+  async function fetchNews() {
     setLoading(true)
-    try{
+    try {
       const res = await fetch(BACKEND_URL + '/news')
       const j = await res.json()
       setNews(j.samples || [])
-    }catch(err){
+    } catch (err) {
       console.error(err)
-    }finally{ setLoading(false) }
+    } finally {
+      setLoading(false)
+    }
   }
 
-  function handleAsk(){
-    if(!query.trim()) return setAnswer('Please type a question or topic.')
+  function handleAsk() {
+    if (!query.trim()) return setAnswer('Please type a question or topic.')
     const q = query.toLowerCase()
     const found = news.find(n => (n.title + ' ' + n.summary).toLowerCase().includes(q))
-    if(found) setAnswer(found.title + ' — ' + found.summary)
+    if (found) setAnswer(found.title + ' — ' + found.summary)
     else setAnswer('Sorry, I could not find a direct match. Try something else or check the Headlines.')
   }
 
-  async function handleGenerateLink(target){
-    setLinkLoading(true); setGeneratedLink('')
-    try{
+  async function handleGenerateLink(target) {
+    setLinkLoading(true)
+    setGeneratedLink('')
+    try {
       const res = await fetch(BACKEND_URL + '/create-link', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ target })
+        body: JSON.stringify({ target }),
       })
       const j = await res.json()
-      if(j.trackLink) setGeneratedLink(j.trackLink)
+      if (j.trackLink) setGeneratedLink(j.trackLink)
+      else if (j.track_url) setGeneratedLink(j.track_url)
       else setGeneratedLink('Failed to create link')
-    }catch(err){ setGeneratedLink('Backend error') }finally{ setLinkLoading(false) }
+    } catch (err) {
+      console.error(err)
+      setGeneratedLink('Backend error')
+    } finally {
+      setLinkLoading(false)
+    }
   }
 
-  const top3 = news.slice(0,3)
+  const top3 = news.slice(0, 3)
 
   return (
     <div className="container">
@@ -63,21 +74,24 @@ function App(){
         <main>
           <div className="card">
             <h3>Headlines</h3>
-            <div className="small" style={{marginTop:6}}>Latest AI-curated headlines from backend</div>
-            <div style={{marginTop:12}}>
-              {loading ? <div className="small">Loading...</div> :
-                news.length===0 ? <div className="small">No headlines yet.</div> :
+            <div className="small" style={{ marginTop: 6 }}>Latest AI-curated headlines from backend</div>
+            <div style={{ marginTop: 12 }}>
+              {loading ? (
+                <div className="small">Loading...</div>
+              ) : news.length === 0 ? (
+                <div className="small">No headlines yet.</div>
+              ) : (
                 news.map(n => (
                   <div key={n.id} className="news-item">
                     <div className="news-title">{n.title}</div>
                     <div className="news-summary">{n.summary}</div>
                     <div className="actions">
-                      <button className="btn-secondary" onClick={()=>handleGenerateLink(BACKEND_URL + '/news')}>Read Full Story</button>
-                      <button className="btn" onClick={()=>{ navigator.clipboard.writeText(n.title + ' - ' + n.summary); }}>Copy Summary</button>
+                      <button className="btn-secondary" onClick={() => handleGenerateLink(BACKEND_URL + '/news')}>Read Full Story</button>
+                      <button className="btn" onClick={() => { navigator.clipboard.writeText(n.title + ' - ' + n.summary) }}>Copy Summary</button>
                     </div>
                   </div>
                 ))
-              }
+              )}
             </div>
 
             <div className="adbox">
@@ -85,93 +99,73 @@ function App(){
             </div>
           </div>
 
-          <div className="card" style={{marginTop:12}}>
+          <div className="card" style={{ marginTop: 12 }}>
             <h3>Ask Quick NewsGPT</h3>
             <div className="small">Type a topic or question and press Ask — (demo: matches headlines)</div>
-            <div className="ask-box" style={{marginTop:8}}>
-              <input className="input" value={query} onChange={e=>setQuery(e.target.value)} placeholder="e.g. AI policy, monsoon updates" />
+            <div className="ask-box" style={{ marginTop: 8 }}>
+              <input className="input" value={query} onChange={e => setQuery(e.target.value)} placeholder="e.g. AI policy, monsoon updates" />
               <button className="btn" onClick={handleAsk}>Ask</button>
             </div>
-            <div style={{marginTop:12}}>
+            <div style={{ marginTop: 12 }}>
               <div className="small">Answer:</div>
-              <div style={{marginTop:8, padding:12, background:'#fbfdff', borderRadius:8}}>{answer || 'Ask something to get started.'}</div>
+              <div style={{ marginTop: 8, padding: 12, background: '#fbfdff', borderRadius: 8 }}>{answer || 'Ask something to get started.'}</div>
             </div>
           </div>
-
         </main>
 
         <aside>
           <div className="card">
             <h4>Top 3 Headlines</h4>
             <div className="top3">
-              {top3.length===0 ? <div className="small">No headlines</div> :
-                top3.map(t => <div key={t.id} className="top3-item"><strong>{t.title}</strong><div className="small">{t.summary}</div></div>)
+              {top3.length === 0 ? <div className="small">No headlines</div> :
+                top3.map(t => (
+                  <div key={t.id} className="top3-item">
+                    <strong>{t.title}</strong>
+                    <div className="small">{t.summary}</div>
+                  </div>
+                ))
               }
             </div>
-            <div style={{marginTop:12}} className="small">
-              <div>Generate a trackable link for any article</div>
-<div style={{ marginTop: 8 }}>
-  <input
-    id="genInput"
-    className="input"
-    placeholder="Paste article URL and press Generate"
-  />
-  <div style={{ marginTop: 8 }}>
-    <button
-      className="btn"
-      onClick={() => {
-        const v = document.getElementById('genInput').value;
-        if (v) handleGenerateLink(v);
-      }}
-    >
-      {linkLoading ? 'Generating...' : 'Generate Link'}
-    </button>
-  </div>
 
-  {generatedLink && (
-    <div style={{ margin: '10px 0', wordBreak: 'break-all' }}>
-      <div className="small">Tracking Link:</div>
-      <div
-        style={{
-          marginTop: 6,
-          padding: 8,
-          background: '#f1f1f1',
-          borderRadius: 4,
-        }}
-      >
-        <a href={generatedLink} target="_blank" rel="noopener noreferrer">
-          {generatedLink}
-        </a>
-      </div>
-    </div>
-  )}
-</div>
-          borderRadius: 4,
-        }}
-      >
-        <a href={generatedLink} target="_blank" rel="noopener noreferrer">
-          {generatedLink}
-        </a>
-      </div>
-    </div>
-  )}
             <div style={{ marginTop: 12 }} className="small">
-  <div>
-    View stats:{' '}
-    <a href={BACKEND_URL + '/stats'} target="_blank" rel="noreferrer">
-      /stats
-    </a>
-  </div>
-  <div style={{ marginTop: 8 }}>Run some check or content here</div>
-</div>
+              <div>Generate a trackable link for any article</div>
+              <div style={{ marginTop: 8 }}>
+                <input id="genInput" className="input" placeholder="Paste article URL and press Generate" />
+                <div style={{ marginTop: 8 }}>
+                  <button className="btn" onClick={() => {
+                    const v = document.getElementById('genInput').value
+                    if (v) handleGenerateLink(v)
+                  }}>{linkLoading ? 'Generating...' : 'Generate Link'}</button>
+                </div>
+                {generatedLink && (
+                  <div style={{ margin: '10px 0', wordBreak: 'break-all' }}>
+                    <div className="small">Tracking Link:</div>
+                    <div style={{ marginTop: 6, padding: 8, background: '#f1f1f1', borderRadius: 4 }}>
+                      <a href={generatedLink} target="_blank" rel="noopener noreferrer">{generatedLink}</a>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
 
-</aside>
-<div className="footer">
-  © 2025 Quick News Generator
-</div>
-</div>
-)
-}
+            <div style={{ marginTop: 12 }} className="small">
+              <div>
+                View stats: <a href={BACKEND_URL + '/stats'} target="_blank" rel="noreferrer">/stats</a>
+              </div>
+              <div style={{ marginTop: 8 }}>Run some check or content here</div>
+            </div>
+          </div>
+
+          <div className="card" style={{ marginTop: 12 }}>
+            <h4>About</h4>
+            <div className="small">Quick NewsGPT demo — frontend connected to your backend. Ad-ready layout and simple Ask box.</div>
+          </div>
+        </aside>
+      </div>
+
+      <div className="footer">© 2025 Quick NewsGPT — Built by Kailash Gautam</div>
+    </div>
+  )
 }
 
 export default App
