@@ -155,23 +155,23 @@ function App(){
       </div>
     </div>
   )}
-            <div style={{marginTop:12}} className="small">
-              <div>View stats: <a href={BACKEND_URL + '/stats'} target="_blank" rel="noreferrer">/stats</a></div>
-              <div style={{marginTop:8}}>Run summary: <a href={BACKEND_URL + '/send-summary'} target="_blank" rel="noreferrer">/send-summary</a></div>
-            </div>
-          </div>
+            <div style={{ marginTop: 12 }} className="small">
+  <div>
+    View stats:{' '}
+    <a href={BACKEND_URL + '/stats'} target="_blank" rel="noreferrer">
+      /stats
+    </a>
+  </div>
+  <div style={{ marginTop: 8 }}>Run some check or content here</div>
+</div>
 
-          <div className="card" style={{marginTop:12}}>
-            <h4>About</h4>
-            <div className="small">Quick NewsGPT demo — frontend connected to your backend. Ad-ready layout and simple Ask box.</div>
-          </div>
-
-        </aside>
-      </div>
-
-      <div className="footer">© 2025 Quick NewsGPT — Built by Kailash Gautam</div>
-    </div>
-  )
+</aside>
+<div className="footer">
+  © 2025 Quick News Generator
+</div>
+</div>
+)
+}
 }
 
 export default App
